@@ -1,6 +1,8 @@
 import 'package:NewsLoose/helper/article.dart';
 import 'package:NewsLoose/helper/news.dart';
+import 'package:NewsLoose/screens/main%20screens/category_page.dart';
 import 'package:flutter/material.dart';
+import 'article_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -10,22 +12,29 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   List<String> images=[
-    'assets/images/national.jpg',
-    'assets/images/world.jpg',
-    'assets/images/nature.jpg',
+    'assets/images/business.png',
+    'assets/images/entertainment.jpg',
+    'assets/images/general.jpg',
+    'assets/images/health.jpg',
+    'assets/images/science.jpg',
     'assets/images/sports.jpg',
-    'assets/images/covid.jpg',
-    'assets/images/entertainment.jpg'
+    'assets/images/technology.jpg'
   ];
 
   List<String> names=[
-    'National', 'World', 'Nature', 'Sports', 'COVID', 'Entertainment'
+    'Business','Entertainment','General','Health','Science','Sports','Technology'
   ];
 
-//------------------------------------ Horizontal Category Slider ---------------------------
+//------------------------------------ Horizontal Category Tile Slider ---------------------------
   Widget categoryContainer(String image, String name){
     return GestureDetector(
-      onTap: (){},
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) => CategoryPage(
+            category: name.toLowerCase(),
+          )
+        ));
+      },
       child: Padding(
         padding: const EdgeInsets.only(top:10.0, bottom:10.0, left:5.0, right: 5.0),
         child: Card(
@@ -44,10 +53,13 @@ class _HomePageState extends State<HomePage> {
             ),
             child: Align(
               alignment: Alignment.center,
-              child: Text(
-                name,
-                style: TextStyle(
-                  color: Colors.white,
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(
+                  name,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -56,23 +68,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-//-------------------------------- Home Screen Tiles ---------------------------
-Widget tile(String image, String title, String desc){
-  return Container(
-    child: Column(
-      children: [
-        Image.asset(image),
-        Text(
-          title
-        ),
-        Text(
-          desc
-        )
-      ],
-    ),
-  );
-}
 
 @override
 void initState() { 
@@ -97,6 +92,7 @@ getNews() async{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Container(),
         backgroundColor: Colors.white,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -133,7 +129,7 @@ getNews() async{
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: List.generate(6, (index) => categoryContainer(
+                  children: List.generate(7, (index) => categoryContainer(
                     images[index], names[index]
                   )),
                 ),
@@ -150,6 +146,7 @@ getNews() async{
                       imageUrl: article[index].url_to_image,
                       title: article[index].title,
                       desc: article[index].description,
+                      url: article[index].url,
                     );
                   }
                   ),
@@ -162,6 +159,7 @@ getNews() async{
   }
 }
 
+//-------------------------------- Home Screen Tiles ---------------------------//
 // ignore: must_be_immutable
 class BlogTile extends StatelessWidget {
 
@@ -169,36 +167,50 @@ class BlogTile extends StatelessWidget {
     @required this.imageUrl,
     @required this.title,
     @required this.desc,
+    @required this.url,
   });
 
-  String imageUrl, title, desc;
+  String imageUrl, title, desc, url;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Card(
-        elevation: 10.0,
-        child: Container(
-          child:Column(
-            children: [
-              Image.network(imageUrl),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  title,
+    return GestureDetector(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) => ArticlePage(
+            blogUrl: url,
+          )
+          ));
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Card(
+          elevation: 10.0,
+          child: Container(
+            child:Column(
+              children: [
+                Image.network(imageUrl),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0
+                    ),
+                    ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left:8.0, right:8.0, bottom:8.0),
+                  child: Text(desc,
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0
+                      fontSize: 15.0
+                    ),
                   ),
-                  ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left:8.0, right:8.0, bottom:8.0),
-                child: Text(desc),
+                )
+              ],
               )
-            ],
-            )
+          ),
         ),
       ),
     );
